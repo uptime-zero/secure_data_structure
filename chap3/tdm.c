@@ -25,7 +25,7 @@ int main() {
     // 1. 변수 선언
     int N, M;  // 단어(N) 및 문서 개수(M)
     char terms[31][21];  // 단어 개수와 단어의 길이
-    Element sparse_matrix[1500];  // 전체 크기
+    Element sparse_matrix[1500];  // 전체 크기 (N과 M을 입력받고 선언하는 것이 제일 좋긴 함 -> malloc 또는 sparse_matrix[N * M])
     int count = 0;  // 실제로 저장된 원소 개수
 
     // 2. 단어 개수, 단어, 문서 개수 입력
