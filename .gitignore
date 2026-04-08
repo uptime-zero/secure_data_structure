@@ -1,2 +1,22 @@
+# Mac OS
 .DS_Store
+
+# JetBrains
 .idea
+
+# 컴파일 시 생성되는 오브젝트 파일 (중간 생성물)
+*.o
+*.obj
+
+# 실행 파일 (윈도우)
+*.exe
+
+# 디버그용 정보 파일
+*.pdb
+*.ilk
+
+# VS Code나 Visual Studio 설정 폴더
+.vscode/
+.vs/
+bin/
+obj/
