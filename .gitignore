@@ -10,6 +10,7 @@
 
 # 실행 파일 (윈도우)
 *.exe
+CMakeLists.txt
 
 # 디버그용 정보 파일
 *.pdb
