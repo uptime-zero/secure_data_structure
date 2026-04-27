@@ -108,17 +108,13 @@ void initScores(Stack stacks[]) {
 void processPlayBalls(Stack stacks[]) {
     for (int i = 0; i < 10; i++) {
         int ball, col;
-        char comma;
+        scanf("%d %d", &ball, &col);
 
-        if (i < 9) {
-            scanf("%d %d,", &ball, &col); // 숫자 두 개 읽고 쉼표까지 소비
-        } else {
-            scanf("%d %d", &ball, &col);   // 마지막 쌍은 쉼표 없음
-        }
+        char ch;
+        while ((ch = getchar()) != EOF && ch != '\n' && ch != ' ' && ch != ',');  // 숫자가 아닌 문자가 나올 때까지 소비
 
         col--;
 
-        // peek한 값이 현재 구슬 번호와 같으면 pop, 아니면 push
         if (peek(&stacks[col]) == ball) {
             pop(&stacks[col]);
         } else {
