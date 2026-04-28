@@ -39,23 +39,37 @@
 #include <string.h>
 #include <stdlib.h>
 
-#define MAX_STACK_SIZE 100   // 스택에 담을 수 있는 최대 태그 개수
 #define MAX_LINE_LENGTH 1024 // 한 줄에 입력받을 수 있는 최대 문자 길이
 
-char stack[MAX_STACK_SIZE][50]; // 태그 이름(문자열)을 저장하는 2차원 배열 스택
-int top = -1;                   // 스택의 최상단을 가리키는 인덱스 (빈 상태는 -1)
+typedef struct Node {
+    char tag[50];
+    struct Node* next;
+} Node;
 
+Node* top = NULL; 
+
+// push
 void push(char* tag) {
-    if (top < MAX_STACK_SIZE - 1) {
-        strcpy(stack[++top], tag);
-    } else {
-        printf("\n저장 가능한 스택의 크기를 넘어섰습니다. 더 이상 저장할 수 없습니다.\n");
-        return;
-    }
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    strcpy(newNode->tag, tag);
+    newNode->next = top;
+    top = newNode;
 }
 
+// pop
 char* pop() {
-    return (top >= 0) ? stack[top--] : NULL;
+    if (top == NULL) {
+        return NULL;
+    }
+
+    static char tag[50];    // 함수 내부에서 선언된 배열은 리턴 시 메모리가 해제되어 사용할 수 없지만 static을 사용해서 함수 종료 시에도 유지되도록 함
+    strcpy(tag, top->tag);
+
+    Node* tmp = top;
+    top = top->next;
+    free(tmp);
+
+    return tag;
 }
 
 // 태그 전체(<div class="abc">)에서 순수 이름(div)만 뽑아내는 함수
@@ -155,8 +169,9 @@ int main() {
     }
 
     // 4. 전체 입력 종료 후 스택에 남은 모든 태그를 순서대로 닫아줌
-    while (top >= 0) {
-        strcat(result, "</"); strcat(result, pop()); strcat(result, "> ");
+    char* tag;
+    while ((tag = pop()) != NULL) {
+        strcat(result, "</"); strcat(result, tag); strcat(result, "> ");
     }
 
     // 최종 완성된 결과 출력
