@@ -98,6 +98,8 @@ int main() {
     }
 
     queue *lq = malloc(sizeof(queue));
+    lq->front = NULL;
+    lq->rear = NULL;
     for (int i = 0; i < N; i++) {
         int num;
         scanf("%d", &num);
@@ -105,6 +107,8 @@ int main() {
     }
 
     queue *rq = malloc(sizeof(queue));
+    rq->front = NULL;
+    rq->rear = NULL;
     for (int i = 1; i <= N; i++) {
         enQueue(rq, i);
     }
