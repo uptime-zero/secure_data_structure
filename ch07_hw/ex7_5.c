@@ -1,47 +1,31 @@
 #include <stdio.h>
 #include "avl.h"
-#include "bst2.h"
+#include <windows.h>
+
+/* 트리 구조를 시각화 (오른쪽이 위, 왼쪽이 아래 — 시계 반대 방향 90도 회전 형태) */
+void printTree(treeNode* root, int level) {
+    if (root == NULL) return;
+    printTree(root->right, level + 1);
+    for (int i = 0; i < level; i++) printf("    ");
+    printf("[%d]\n", root->key);
+    printTree(root->left, level + 1);
+}
 
 int main(void) {
-	treeNode* root_AVL = NULL;
-	treeNode* root_BST = NULL;
-	//////////////////////////////////////////////////////////////////
-	root_AVL = insertAVLNode(&root_AVL, 50); // AVL 트리 만들기
-	insertAVLNode(&root_AVL, 60);
-	insertAVLNode(&root_AVL, 70);
-	insertAVLNode(&root_AVL, 90);
-	insertAVLNode(&root_AVL, 80);
-	insertAVLNode(&root_AVL, 75);
-	insertAVLNode(&root_AVL, 73);
-	insertAVLNode(&root_AVL, 72);
-	insertAVLNode(&root_AVL, 78);
-	printf("\n ******* AVL 트리 출력 ****************** \n\n");
-	displayInorder(root_AVL); //중위순회 경로 출력
-	printf("\n\n AVL 트리에서 70 탐색 : ");
-	searchBST(root_AVL, 70);
-	printf("\n\n AVL 트리에서 72 탐색 : ");
-	searchBST(root_AVL, 72);
-	printf("\n\n AVL 트리에서 76 탐색 : ");
-	searchBST(root_AVL, 76);
+    SetConsoleOutputCP(65001);
+    treeNode* root = NULL;
+    int keys[] = {59, 78, 65, 23, 7, 25, 52, 49, 99, 80};
+    int n = sizeof(keys) / sizeof(keys[0]);
 
-	/////////////////////////////////////////////////////////////////////////////
-	root_BST = insertBSTNode(root_BST, 50); //BST 만들기
-	insertBSTNode(root_BST, 60);
-	insertBSTNode(root_BST, 70);
-	insertBSTNode(root_BST, 90);
-	insertBSTNode(root_BST, 80);
-	insertBSTNode(root_BST, 75);
-	insertBSTNode(root_BST, 73);
-	insertBSTNode(root_BST, 72);
-	insertBSTNode(root_BST, 78);
-	printf("\n\n\n ******* BST 출력 ************************ \n\n");
-	displayInorder(root_BST);  //중위순회 경로 출력
-	printf("\n\n BST에서 70 탐색 : ");
-	searchBST(root_BST, 70);
-	printf("\n\n BST에서 72 탐색 : ");
-	searchBST(root_BST, 72);
-	printf("\n\n BST에서 76 탐색 : ");
-	searchBST(root_BST, 76);
-	getchar(); 
-	return 0;
+    for (int i = 0; i < n; i++) {
+        root = insertAVLNode(&root, keys[i]);
+        printf("=== %d단계: %d 삽입 후 AVL 트리 ===\n", i + 1, keys[i]);
+        printTree(root, 0);
+        printf("중위 순회: ");
+        displayInorder(root);
+        printf("\n\n");
+    }
+
+    getchar();
+    return 0;
 }
