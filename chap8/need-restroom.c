@@ -2,7 +2,7 @@
  * N개 건물의 위치가 1부터 N까지 숫자로 표시된 지도에서
  * 현재 위치(1)에서 화장실(N)까지 가장 빠른 경로를 구한다.
  * 모든 길은 양방향이고 가중치가 1인 그래프에서 최단 경로를 찾는다.
- * 모든 가중치가 1이기 때문에 bfs가 더 효율적일 것이라 판단.
+ * 다익스트라 알고리즘을 사용하여 최단 경로를 구한다.
  */
 
 /** 입력 조건
@@ -28,42 +28,14 @@
 #include <stdio.h>
 
 #define MAX 51
+#define INF 99999
 
 // 그래프의 인접 행렬 및 상태 관리 배열
 int graph[MAX][MAX];    // graph[u][v] = 1이면 u와 v는 연결된 상태
 int visited[MAX];       // 방문한 건물인지 확인 (중복 탐색 방지)
 int parent[MAX];        // 경로 역추적을 위해 각 노드에 도달하기 직전의 노드를 저장
+int dist[MAX];          // 시작점(1)에서 각 노드까지의 최단 거리를 저장
 int N, M;               // N: 건물의 총 개수, M: 도로의 총 개수
-
-// BFS 탐색을 위한 큐(Queue)와 인덱스
-int queue[MAX];
-int head = 0;
-int tail = 0;
-
-int isQueueFull() {
-    return tail >= MAX;
-}
-
-int isQueueEmpty() {
-    return head >= tail;
-}
-
-// 큐 삽입 함수
-void enQueue(int node) {
-    if (isQueueFull()) {
-        printf("큐가 가득 찼습니다.\n");
-        return;
-    }
-    queue[tail++] = node;
-}
-
-int deQueue() {
-    if (isQueueEmpty()) {
-        printf("큐가 비어있습니다.\n");
-        return -1;
-    }
-    return queue[head++];
-}
 
 int main() {
     // 1. 입력 받기: 건물의 개수 N과 도로의 개수 M
@@ -107,42 +79,52 @@ int main() {
         graph[v][u] = 1; // 양쪽 모두 1로 표기
     }
 
-    // 3. BFS 초기 설정
-    enQueue(1);           // 시작 위치(건물 1)를 큐에 삽입
-    visited[1] = 1;       // 시작 위치 방문 체크
-    parent[1] = -1;       // 시작점은 이전 노드가 없으므로 -1로 초기화
+    // 3. 다익스트라 초기 설정
+    for (int i = 1; i <= N; i++) {
+        dist[i]    = INF;   // 모든 노드의 초기 거리를 무한대로 설정
+        parent[i]  = -1;    // 모든 노드의 초기 부모를 -1로 설정
+        visited[i] = 0;     // 모든 노드를 미방문 상태로 초기화
+    }
+    dist[1] = 0; // 시작점(1)의 거리는 0으로 설정
 
-    // BFS 수행
-    while (!isQueueEmpty()) {
-        int u = deQueue(); // 현재 위치를 큐에서 추출
-
-        if (u == -1) {
-            break; // deQueue 실패 시 종료
+    // 4. 다익스트라 수행
+    for (int i = 0; i < N; i++) {
+        // 방문하지 않은 노드 중 현재 가장 가까운 노드(u)를 선택
+        int u = -1;
+        for (int j = 1; j <= N; j++) {
+            if (!visited[j] && (u == -1 || dist[j] < dist[u])) {
+                u = j;
+            }
         }
+
+        // 더 이상 방문할 노드가 없으면 종료
+        if (u == -1 || dist[u] == INF) break;
+
+        visited[u] = 1; // 현재 노드(u)를 방문 처리
 
         // 현재 위치가 도착지(화장실, 건물 N)라면 탐색 중단
-        if (u == N) {
-            break;
-        }
+        if (u == N) break;
 
         // 현재 위치(u)와 연결된 모든 건물(v) 탐색
         for (int v = 1; v <= N; v++) {
             // 연결되어 있고(graph[u][v] == 1) 아직 방문하지 않은 건물이라면
             if (graph[u][v] == 1 && !visited[v]) {
-                visited[v] = 1;       // 방문 처리
-                parent[v] = u;        // v에 도달하기 직전 위치(u)를 부모로 기록 (역추적용)
-                enQueue(v);           // 다음 탐색을 위해 큐에 삽입
+                // 현재 경로(dist[u] + 1)가 기존 dist[v]보다 짧으면 갱신
+                if (dist[u] + 1 < dist[v]) {
+                    dist[v]   = dist[u] + 1; // 최단 거리 갱신
+                    parent[v] = u;           // v에 도달하기 직전 위치(u)를 부모로 기록 (역추적용)
+                }
             }
         }
     }
 
     // 경로 도달 가능 여부 확인
-    if (!visited[N]) {
+    if (dist[N] == INF) {
         printf("경로가 존재하지 않습니다.\n");
         return 1;
     }
 
-    // 4. 경로 역추적
+    // 5. 경로 역추적
     // parent 배열에는 도착점에서 시작점까지 연결된 이정표가 저장되어 있음
     int path[MAX];
     int count = 0;

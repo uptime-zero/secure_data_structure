@@ -56,6 +56,7 @@ Pos deQueue() {
     if (head <= tail) {
         return queue[++head];
     }
+    return (Pos){-99, -99};
 }
 
 void bfs() {
